@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number &amp; Shape Pattern Adventure</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        .quiz-container {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Decorative background elements */
+        .bg-decoration {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .cloud {
+            background: white;
+            border-radius: 50px;
+            opacity: 0.8;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .cloud1 {
+            width: 80px;
+            height: 40px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .cloud2 {
+            width: 60px;
+            height: 30px;
+            top: 20%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .cloud3 {
+            width: 100px;
+            height: 50px;
+            bottom: 20%;
+            left: 5%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .rainbow {
+            position: absolute;
+            top: 5%;
+            right: 10%;
+            width: 150px;
+            height: 75px;
+            border-radius: 150px 150px 0 0;
+            border: 8px solid transparent;
+            border-top: 8px solid #ff6b6b;
+            border-left: 8px solid #ff6b6b;
+            border-right: 8px solid #ff6b6b;
+            opacity: 0.7;
+        }
+
+        .rainbow::before {
+            content: '';
+            position: absolute;
+            top: -16px;
+            left: -16px;
+            right: -16px;
+            height: 75px;
+            border-radius: 150px 150px 0 0;
+            border: 8px solid transparent;
+            border-top: 8px solid #4ecdc4;
+            border-left: 8px solid #4ecdc4;
+            border-right: 8px solid #4ecdc4;
+        }
+
+        .rainbow::after {
+            content: '';
+            position: absolute;
+            top: -24px;
+            left: -24px;
+            right: -24px;
+            height: 75px;
+            border-radius: 150px 150px 0 0;
+            border: 8px solid transparent;
+            border-top: 8px solid #45b7d1;
+            border-left: 8px solid #45b7d1;
+            border-right: 8px solid #45b7d1;
+        }
+
+        .screen {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            border: 3px solid #fff;
+        }
+
+        .welcome-screen h1 {
+            color: #ff6b6b;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .question-screen h2 {
+            color: #45b7d1;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+
+        .pattern-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .shape {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .shape:nth-child(even) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .balls-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .ball {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: ballBounce 1.5s ease-in-out infinite;
+        }
+
+        .ball:nth-child(odd) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes ballBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .choices {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .choice-btn {
+            background: linear-gradient(45deg, #96ceb4, #ffeaa7);
+            color: #2d3436;
+            border: none;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .choice-btn.correct {
+            background: linear-gradient(45deg, #00b894, #00cec9);
+            color: white;
+            animation: correctPulse 0.6s ease-in-out;
+        }
+
+        .choice-btn.incorrect {
+            background: linear-gradient(45deg, #e17055, #fd79a8);
+            color: white;
+            animation: shake 0.6s ease-in-out;
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .score-display {
+            font-size: 1.2rem;
+            color: #45b7d1;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .completion-screen {
+            text-align: center;
+        }
+
+        .completion-screen h2 {
+            color: #00b894;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .final-score {
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .restart-btn {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        .feedback.correct {
+            color: #00b894;
+        }
+
+        .feedback.incorrect {
+            color: #e17055;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-screen h1 {
+                font-size: 2rem;
+            }
+            
+            .screen {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .shape {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .ball {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Background decorations -->
+  <div class="bg-decoration cloud cloud1"></div>
+  <div class="bg-decoration cloud cloud2"></div>
+  <div class="bg-decoration cloud cloud3"></div>
+  <div class="bg-decoration rainbow"></div>
+  <div class="quiz-container"><!-- Welcome Screen -->
+   <div id="welcome-screen" class="screen welcome-screen">
+    <h1 id="quiz-title">The Number &amp; Shape Pattern Adventure!</h1><button id="start-btn" class="start-btn">Start Game</button>
+   </div><!-- Question Screen -->
+   <div id="question-screen" class="screen question-screen hidden">
+    <div class="progress-bar">
+     <div id="progress-fill" class="progress-fill"></div>
+    </div>
+    <div id="score-display" class="score-display">
+     Score: 0/9
+    </div>
+    <h2 id="question-text">What kind of pattern is this?</h2>
+    <div id="pattern-display" class="pattern-display"></div>
+    <div id="choices" class="choices"></div>
+    <div id="feedback" class="feedback"></div>
+   </div><!-- Completion Screen -->
+   <div id="completion-screen" class="screen completion-screen hidden">
+    <h2 id="completion-message">🎉 Congratulations! 🎉</h2>
+    <div id="final-score" class="final-score">
+     You scored 0 out of 9!
+    </div>
+    <p>Great job learning about patterns and numbers!</p><button id="restart-btn" class="restart-btn">Play Again</button>
+   </div>
+  </div>
+  <script>
+        const defaultConfig = {
+            quiz_title: "The Number & Shape Pattern Adventure!",
+            welcome_button: "Start Game",
+            completion_message: "🎉 Congratulations! 🎉"
+        };
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null;
+
+        const questions = [
+            {
+                type: 'pattern',
+                question: 'What kind of pattern is this?',
+                pattern: ['🔺', '🔺', '🟦', '🔺', '🔺', '🟦'],
+                choices: ['AB', 'ABB', 'AAB'],
+                correct: 2
+            },
+            {
+                type: 'pattern',
+                question: 'What kind of pattern is this?',
+                pattern: ['⭕', '⭐', '⭕', '⭐', '⭕', '⭐'],
+                choices: ['AB', 'AAB', 'ABB'],
+                correct: 0
+            },
+            {
+                type: 'pattern',
+                question: 'What kind of pattern is this?',
+                pattern: ['⭕', '⭐', '⭕', '⭐'],
+                choices: ['AB', 'AAB', 'ABB'],
+                correct: 0
+            },
+            {
+                type: 'pattern',
+                question: 'What kind of pattern is this?',
+                pattern: ['⭐', '⭕', '⭕', '⭐', '⭕', '⭕'],
+                choices: ['AAB', 'AB', 'ABB'],
+                correct: 2
+            },
+            {
+                type: 'pattern',
+                question: 'What kind of pattern is this?',
+                pattern: ['⭐', '⭐', '⭕', '⭕', '⭐', '⭐'],
+                choices: ['ABB', 'AB', 'AABB'],
+                correct: 2
+            },
+            {
+                type: 'counting',
+                question: 'How many balls?',
+                count: 3,
+                choices: ['2', '3', '4'],
+                correct: 1
+            },
+            {
+                type: 'counting',
+                question: 'How many balls?',
+                count: 5,
+                choices: ['4', '6', '5'],
+                correct: 2
+            },
+            {
+                type: 'counting',
+                question: 'How many balls?',
+                count: 12,
+                choices: ['12', '10', '11'],
+                correct: 0
+            },
+            {
+                type: 'counting',
+                question: 'How many balls?',
+                count: 19,
+                choices: ['18', '20', '19'],
+                correct: 2
+            }
+        ];
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestion / questions.length) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('score-display').textContent = `Score: ${score}/${questions.length}`;
+        }
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question-text').textContent = question.question;
+            
+            const patternDisplay = document.getElementById('pattern-display');
+            const choicesContainer = document.getElementById('choices');
+            
+            patternDisplay.innerHTML = '';
+            choicesContainer.innerHTML = '';
+            
+            if (question.type === 'pattern') {
+                question.pattern.forEach((shape, index) => {
+                    const shapeElement = document.createElement('div');
+                    shapeElement.className = 'shape';
+                    shapeElement.textContent = shape;
+                    shapeElement.style.animationDelay = (index * 0.1) + 's';
+                    patternDisplay.appendChild(shapeElement);
+                });
+            } else if (question.type === 'counting') {
+                patternDisplay.className = 'balls-display';
+                const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#fd79a8', '#e17055', '#00b894', '#74b9ff'];
+                
+                for (let i = 0; i < question.count; i++) {
+                    const ball = document.createElement('div');
+                    ball.className = 'ball';
+                    ball.style.backgroundColor = colors[i % colors.length];
+                    ball.style.animationDelay = (i * 0.1) + 's';
+                    patternDisplay.appendChild(ball);
+                }
+            }
+            
+            question.choices.forEach((choice, index) => {
+                const button = document.createElement('button');
+                button.className = 'choice-btn';
+                button.textContent = choice;
+                button.onclick = () => selectAnswer(index);
+                choicesContainer.appendChild(button);
+            });
+            
+            document.getElementById('feedback').textContent = '';
+            selectedAnswer = null;
+            updateProgress();
+        }
+
+        function selectAnswer(answerIndex) {
+            if (selectedAnswer !== null) return;
+            
+            selectedAnswer = answerIndex;
+            const question = questions[currentQuestion];
+            const buttons = document.querySelectorAll('.choice-btn');
+            const feedback = document.getElementById('feedback');
+            
+            buttons[answerIndex].classList.add(answerIndex === question.correct ? 'correct' : 'incorrect');
+            
+            if (answerIndex === question.correct) {
+                score++;
+                feedback.textContent = '🎉 Correct! Well done!';
+                feedback.className = 'feedback correct';
+            } else {
+                buttons[question.correct].classList.add('correct');
+                feedback.textContent = '❌ Not quite right. The correct answer is highlighted!';
+                feedback.className = 'feedback incorrect';
+            }
+            
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    displayQuestion();
+                } else {
+                    showCompletionScreen();
+                }
+            }, 2000);
+        }
+
+        function showCompletionScreen() {
+            document.getElementById('final-score').textContent = `You scored ${score} out of ${questions.length}!`;
+            showScreen('completion-screen');
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            selectedAnswer = null;
+            showScreen('welcome-screen');
+        }
+
+        function startQuiz() {
+            showScreen('question-screen');
+            displayQuestion();
+        }
+
+        // Event listeners
+        document.getElementById('start-btn').onclick = startQuiz;
+        document.getElementById('restart-btn').onclick = restartQuiz;
+
+        // Element SDK implementation
+        async function onConfigChange(config) {
+            const titleElement = document.getElementById('quiz-title');
+            const startButton = document.getElementById('start-btn');
+            const completionMessage = document.getElementById('completion-message');
+            
+            if (titleElement) {
+                titleElement.textContent = config.quiz_title || defaultConfig.quiz_title;
+            }
+            if (startButton) {
+                startButton.textContent = config.welcome_button || defaultConfig.welcome_button;
+            }
+            if (completionMessage) {
+                completionMessage.textContent = config.completion_message || defaultConfig.completion_message;
+            }
+        }
+
+        function mapToCapabilities(config) {
+            return {
+                recolorables: [],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            };
+        }
+
+        function mapToEditPanelValues(config) {
+            return new Map([
+                ["quiz_title", config.quiz_title || defaultConfig.quiz_title],
+                ["welcome_button", config.welcome_button || defaultConfig.welcome_button],
+                ["completion_message", config.completion_message || defaultConfig.completion_message]
+            ]);
+        }
+
+        // Initialize Element SDK
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities,
+                mapToEditPanelValues
+            });
+        }
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99e6da0f355c3cba',t:'MTc2MzEyNjkwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
